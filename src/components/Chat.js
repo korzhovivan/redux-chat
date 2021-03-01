@@ -1,52 +1,44 @@
-import React,{createRef, useState} from 'react'
-import {createStore} from 'redux'
+import React,{useCallback, useState} from 'react'
 import './chat.css'
 import Message from './Message';
 
-import messageReducer from './../redux/reducer';
 import { addMessage } from './../redux/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 export default function Chat(){
 
-    //Input`s changes
+    const dispatch = useDispatch()
+
+    //States
     const [inputValue, setInputValue] = useState('')
-    
-    function InputChange(e){
-        return (e) => {
-            setInputValue(e.target.value)
-        }
-    }
-    // DIV with messages ref
-    const mess = createRef()
-    
-    //Messages store
-    const MessagesStore = createStore(messageReducer, [])
+    //const [messages, setMessages] = useState([])
 
-    const [messages, setMessages] = useState({arr:[]})
-
-    const handlerSendBtn = () => {
-        return () => {
-            MessagesStore.dispatch(addMessage(inputValue))
-        }
+    //Handlers
+    function handlInputChange(e){
+        setInputValue(e.target.value)
     }
-    MessagesStore.subscribe(()=>{
+    const handlSendBtn = () => {
+        dispatch(addMessage(inputValue))
+    }
    
-        setMessages({arr: MessagesStore.getState().arr})
-        
-    })
+    // MessagesStore.subscribe(()=>{
+    //     setMessages(MessagesStore.getState().arr)
+    // })
+
+    const messages = useSelector(state => state.arr)
     
 
     return(
         <div className='chat'>
-            <div ref={mess} className='messages'>
-                {messages.arr.map((mes, key)=>{
+            <div className='messages'>
+                {messages.map((mes, key)=>{
                     return <Message key={key} textMessage={mes}/>
                 })}
             </div>
             <div className="input-group">
-                <input placeholder={'Write a message...'} value={inputValue} onChange={InputChange()}/>
-                <button onClick={handlerSendBtn()}>Send</button>
+                <input placeholder={'Write a message...'} value={inputValue} onChange={handlInputChange}/>
+                <button onClick={handlSendBtn}>Send</button>
             </div>
             
         </div>

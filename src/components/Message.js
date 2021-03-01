@@ -1,9 +1,11 @@
-import  React, {useState} from 'react';
+import  React, {useState, useMemo} from 'react';
 import edit_img from './../img/edit.png'
 
 export default function Message({textMessage}){
 
-    const [dateTime, setDateTime] = useState(new Date());
+    
+
+    const dateTime = useMemo(new Date())
 
     return(
         
